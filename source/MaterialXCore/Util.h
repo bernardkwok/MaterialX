@@ -17,8 +17,10 @@ namespace MaterialX
 extern const string EMPTY_STRING;
 
 class Element;
+class NodeGraph;
 
 using ElementPtr = shared_ptr<Element>;
+using NodeGraphPtr = shared_ptr<NodeGraph>;
 
 /// Return the version of the MaterialX library as a string.
 string getVersionString();
@@ -38,7 +40,7 @@ string incrementName(const string& name);
 
 /// Split a string into a vector of substrings using the given set of
 /// separator characters.
-StringVec splitString(const string& str, const string& sep);
+vector<string> splitString(const string& str, const string& sep);
 
 /// Apply the given substring substitutions to the input string.
 string replaceSubstrings(string str, const StringMap& stringMap);

@@ -11,7 +11,6 @@
 
 #include <MaterialXCore/Library.h>
 
-#include <MaterialXCore/Geom.h>
 #include <MaterialXCore/Node.h>
 #include <MaterialXCore/Value.h>
 
@@ -46,6 +45,16 @@ using ConstBindParamPtr = shared_ptr<const BindParam>;
 using BindInputPtr = shared_ptr<BindInput>;
 /// A shared pointer to a const BindInput
 using ConstBindInputPtr = shared_ptr<const BindInput>;
+
+/// A shared pointer to an Override
+using OverridePtr = shared_ptr<Override>;
+/// A shared pointer to a const Override
+using ConstOverridePtr = shared_ptr<const Override>;
+
+/// A shared pointer to a MaterialInherit
+using MaterialInheritPtr = shared_ptr<MaterialInherit>;
+/// A shared pointer to a const MaterialInherit
+using ConstMaterialInheritPtr = shared_ptr<const MaterialInherit>;
 
 /// @class Material
 /// A material element within a Document.
@@ -102,6 +111,91 @@ class Material : public Element
     }
 
     /// @}
+    /// @name Override Elements
+    /// @{
+
+    /// Add a Override to the material.
+    /// @param name The name of the new Override.
+    ///     If no name is specified, then a unique name will automatically be
+    ///     generated.
+    /// @return A shared pointer to the new Override.
+    OverridePtr addOverride(const string& name)
+    {
+        return addChild<Override>(name);
+    }
+
+    /// Return the Override, if any, with the given name.
+    OverridePtr getOverride(const string& name) const
+    {
+        return getChildOfType<Override>(name);
+    }
+
+    /// Return a vector of all Override elements that belong to this material,
+    /// taking material inheritance into account.
+    vector<OverridePtr> getActiveOverrides() const;
+
+    /// Return a vector of all Override elements 
+    vector<OverridePtr> getOverrides() const
+    {
+        return getChildrenOfType<Override>();
+    }
+
+    /// Remove the Override, if any, with the given name.
+    void removeOverride(const string& name)
+    {
+        removeChildOfType<Override>(name);
+    }
+
+    /// Set the value of an override by its name, creating a child element
+    /// to hold the override if needed.
+    template<class T> OverridePtr setOverrideValue(const string& name,
+                                                   const T& value,
+                                                   const string& type = EMPTY_STRING);
+
+    /// @}
+    /// @name MaterialInherit Elements
+    /// @{
+
+    /// Add a MaterialInherit to the material.
+    /// @param name The name of the new MaterialInherit.
+    ///     If no name is specified, then a unique name will automatically be
+    ///     generated.
+    /// @return A shared pointer to the new MaterialInherit.
+    MaterialInheritPtr addMaterialInherit(const string& name = EMPTY_STRING)
+    {
+        MaterialInheritPtr ptr = addChild<MaterialInherit>(name);
+        return ptr;
+    }
+
+    /// Return the MaterialInherit, if any, with the given name.
+    MaterialInheritPtr getMaterialInherit(const string& name) const
+    {
+        return getChildOfType<MaterialInherit>(name);
+    }
+
+    /// Return a vector of all MaterialInherit elements in the material.
+    vector<MaterialInheritPtr> getMaterialInherits() const
+    {
+        return getChildrenOfType<MaterialInherit>();
+    }
+
+    /// Remove the MaterialInherit, if any, with the given name.
+    void removeMaterialInherit(const string& name)
+    {
+        removeChildOfType<MaterialInherit>(name);
+    }
+
+    /// @}
+    /// @name Inheritance
+    /// @{
+
+    /// Set the material element that this one inherits from.
+    void setInheritsFrom(ElementPtr mat) override;
+
+    /// Return the material element, if any, that this one inherits from.
+    ElementPtr getInheritsFrom() const override;
+
+    /// @}
     /// @name NodeDef References
     /// @{
 
@@ -114,6 +208,13 @@ class Material : public Element
     /// @return A vector of shared pointers to NodeDef elements.
     vector<NodeDefPtr> getShaderNodeDefs(const string& target = EMPTY_STRING,
                                          const string& type = EMPTY_STRING) const;
+
+    /// @}
+    /// @name MaterialAssign References
+    /// @{
+
+    /// Return all MaterialAssign elements that reference this material.
+    vector<MaterialAssignPtr> getReferencingMaterialAssigns() const;
 
     /// @}
     /// @name Primary Shader
@@ -175,12 +276,17 @@ class Material : public Element
     /// @name Geometry Bindings
     /// @{
 
-    /// Return a vector of all MaterialAssign elements that bind this material
-    /// to the given geometry string.
-    /// @param geom The geometry for which material bindings should be returned.
-    ///    By default, this argument is the universal geometry string "/", and
-    ///    all material bindings are returned.
-    vector<MaterialAssignPtr> getGeometryBindings(const string& geom = UNIVERSAL_GEOM_NAME) const;
+    /// Return all geometry strings that are bound to this material by Look
+    /// elements.  Note that this method only considers geometry strings,
+    /// not geometric collections.
+    /// @return A vector of geometry strings, each containing an array of
+    ///    geom names.
+    vector<string> getBoundGeomStrings() const;
+
+    /// Return all geometry collections that are bound to this material by
+    /// Look elements.
+    /// @return A vector of shared pointers to Collection elements.
+    vector<CollectionPtr> getBoundGeomCollections() const;
 
     /// @}
     /// @name Validation
@@ -232,19 +338,13 @@ class BindInput : public ValueElement
     /// @name NodeGraph String
     /// @{
 
-    /// Set the node graph string of this element.
+    /// Set the node graph string of the BindInput.
     void setNodeGraphString(const string& graph)
     {
         setAttribute(NODE_GRAPH_ATTRIBUTE, graph);
     }
 
-    /// Return true if this element has a node graph string.
-    bool hasNodeGraphString() const
-    {
-        return hasAttribute(NODE_GRAPH_ATTRIBUTE);
-    }
-
-    /// Return the node graph string of this element.
+    /// Return the node graph string of the BindInput.
     const string& getNodeGraphString() const
     {
         return getAttribute(NODE_GRAPH_ATTRIBUTE);
@@ -254,19 +354,13 @@ class BindInput : public ValueElement
     /// @name Output String
     /// @{
 
-    /// Set the output string of this element.
+    /// Set the output string of the BindInput.
     void setOutputString(const string& output)
     {
         setAttribute(OUTPUT_ATTRIBUTE, output);
     }
 
-    /// Return true if this element has an output string.
-    bool hasOutputString() const
-    {
-        return hasAttribute(OUTPUT_ATTRIBUTE);
-    }
-
-    /// Return the output string of this element.
+    /// Return the output string of the BindInput.
     const string& getOutputString() const
     {
         return getAttribute(OUTPUT_ATTRIBUTE);
@@ -294,11 +388,11 @@ class BindInput : public ValueElement
 /// A shader reference element within a Material.
 ///
 /// A ShaderRef instantiates a shader NodeDef within the context of a Material.
-class ShaderRef : public TypedElement
+class ShaderRef : public Element
 {
   public:
     ShaderRef(ElementPtr parent, const string& name) :
-        TypedElement(parent, CATEGORY, name)
+        Element(parent, CATEGORY, name)
     {
     }
     virtual ~ShaderRef() { }
@@ -430,8 +524,8 @@ class ShaderRef : public TypedElement
     /// @name Output References
     /// @{
 
-    /// Return a vector of all outputs that this element references.
-    vector<OutputPtr> getReferencedOutputs() const
+    /// Return the set of outputs that this element references.
+    std::set<OutputPtr> getReferencedOutputs() const
     {
         std::set<OutputPtr> outputs;
         for (BindInputPtr bindInput : getBindInputs())
@@ -442,7 +536,7 @@ class ShaderRef : public TypedElement
                 outputs.insert(output);
             }
         }
-        return vector<OutputPtr>(outputs.begin(), outputs.end());
+        return outputs;
     }
 
     /// @}
@@ -475,6 +569,58 @@ class ShaderRef : public TypedElement
     static const string NODE_ATTRIBUTE;
     static const string NODE_DEF_ATTRIBUTE;
 };
+
+/// @class Override
+/// An override element within a Material.
+///
+/// An Override modifies the uniform value of a public Parameter or Input
+/// within the scope of a Material.
+class Override : public ValueElement
+{
+  public:
+    Override(ElementPtr parent, const string& name) :
+        ValueElement(parent, CATEGORY, name)
+    {
+    }
+    virtual ~Override() { }
+
+    /// @name Connections
+    /// @{
+
+    /// Return the element, if any, that is modified by this override.
+    ConstElementPtr getReceiver() const;
+
+    /// @}
+
+  public:
+    static const string CATEGORY;
+};
+
+/// @class MaterialInherit
+/// A material inheritance element within a Material.
+class MaterialInherit : public Element
+{
+  public:
+    MaterialInherit(ElementPtr parent, const string& name) :
+        Element(parent, CATEGORY, name)
+    {
+    }
+    virtual ~MaterialInherit() { }
+
+  public:
+    static const string CATEGORY;
+};
+
+template<class T> OverridePtr Material::setOverrideValue(const string& name,
+                                                         const T& value,
+                                                         const string& type)
+{
+    OverridePtr override = getChildOfType<Override>(name);
+    if (!override)
+        override = addChild<Override>(name);
+    override->setValue(value, type);
+    return override;
+}
 
 } // namespace MaterialX
 

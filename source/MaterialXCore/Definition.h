@@ -31,6 +31,12 @@ class TypeDef;
 class Member;
 class ShaderRef;
 
+class NodeDef;
+class Implementation;
+class TypeDef;
+class Member;
+class ShaderRef;
+
 /// A shared pointer to a NodeDef
 using NodeDefPtr = shared_ptr<NodeDef>;
 /// A shared pointer to a const NodeDef
