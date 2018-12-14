@@ -1,5 +1,6 @@
 # MaterialX
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5ebe2db7e47d4031b341b4abcdf56afa)](https://app.codacy.com/app/bernardkwok/MaterialX?utm_source=github.com&utm_medium=referral&utm_content=bernardkwok/MaterialX&utm_campaign=Badge_Grade_Settings)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/materialx/MaterialX/blob/master/LICENSE.txt)
 [![Travis Build Status](https://travis-ci.org/materialx/MaterialX.svg?branch=master)](https://travis-ci.org/materialx/MaterialX)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/pmlxnp5m1fve11k0?svg=true)](https://ci.appveyor.com/project/jstone-lucasfilm/materialx)
