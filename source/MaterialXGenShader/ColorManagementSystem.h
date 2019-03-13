@@ -10,7 +10,6 @@
 /// Color management system classes
 
 #include <MaterialXCore/Document.h>
-#include <MaterialXCore/Library.h>
 
 #include <MaterialXGenShader/Library.h>
 #include <MaterialXGenShader/Factory.h>
@@ -56,15 +55,6 @@ class ColorManagementSystem
     /// Return the ColorManagementSystem name
     virtual const string& getName() const = 0;
 
-    /// Return the ColorManagementSystem configFile
-    const string& getConfigFile() const
-    {
-        return _configFile;
-    }
-
-    /// Sets the config file.
-    void setConfigFile(const string& configFile);
-
     /// Load a library of implementations from the provided document,
     /// replacing any previously loaded content.
     virtual void loadLibrary(DocumentPtr document);
@@ -78,17 +68,11 @@ class ColorManagementSystem
 
   protected:
     /// Protected constructor
-    ColorManagementSystem(const string& configFile);
+    ColorManagementSystem();
       
     /// Returns an implementation name for a given transform
     virtual string getImplementationName(const ColorSpaceTransform& transform) const = 0;
 
-    /// Register a node implementation for a given color space transformation.
-    void registerImplementation(const ColorSpaceTransform& transform, CreatorFunction<ShaderNodeImpl> creator);
-
-    Factory<ShaderNodeImpl> _implFactory;
-    vector<string> _registeredImplNames;
-    string _configFile;
     DocumentPtr _document;
 };
 

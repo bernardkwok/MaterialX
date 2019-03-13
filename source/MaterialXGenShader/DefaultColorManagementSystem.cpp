@@ -4,6 +4,7 @@
 //
 
 #include <MaterialXGenShader/DefaultColorManagementSystem.h>
+
 #include <MaterialXGenShader/ShaderGenerator.h>
 
 #include <MaterialXCore/Util.h>
@@ -13,6 +14,9 @@ namespace MaterialX
 
 const string DefaultColorManagementSystem::CMS_NAME = "default_cms";
 
+//
+// DefaultColorManagementSystem methods
+//
 
 string DefaultColorManagementSystem::getImplementationName(const ColorSpaceTransform& transform) const
 {
@@ -26,7 +30,7 @@ DefaultColorManagementSystemPtr DefaultColorManagementSystem::create(const strin
 }
 
 DefaultColorManagementSystem::DefaultColorManagementSystem(const string& language)
-    : ColorManagementSystem(MaterialX::EMPTY_STRING)
+    : ColorManagementSystem()
 {
     _language = createValidName(language);
 }

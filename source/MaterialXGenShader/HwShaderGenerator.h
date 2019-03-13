@@ -131,7 +131,18 @@ public:
     void bind(unsigned int type, ShaderNodePtr shader)
     {
         _shaders[type] = shader;
+    }
 
+    /// Unbind a light shader previously bound to a light type id.
+    void unbind(unsigned int type)
+    {
+        _shaders.erase(type);
+    }
+
+    /// Clear all light shaders previously bound.
+    void clear()
+    {
+        _shaders.clear();
     }
 
     /// Return the light shader bound to the given light type,
@@ -186,6 +197,12 @@ public:
     /// generated surface shader.
     static void bindLightShader(const NodeDef& nodeDef, unsigned int lightTypeId, GenContext& context);
 
+    /// Unbind a light shader previously bound to the given light type id.
+    static void unbindLightShader(unsigned int lightTypeId, GenContext& context);
+
+    /// Unbind all light shaders previously bound.
+    static void unbindLightShaders(GenContext& context);
+
 protected:
     HwShaderGenerator(SyntaxPtr syntax);
 
@@ -197,8 +214,6 @@ protected:
 
     /// Override the compound implementation creator.
     ShaderNodeImplPtr createCompoundImplementation(const NodeGraph& impl) const override;
-
-    unsigned int _maxActiveLightSources;
 
     /// Closure contexts for defining closure functions.
     HwClosureContextPtr _defReflection;

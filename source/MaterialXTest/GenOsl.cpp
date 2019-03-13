@@ -108,14 +108,14 @@ TEST_CASE("OSL Unique Names", "[genosl]")
     GenShaderUtil::testUniqueNames(context, mx::Stage::PIXEL);
 }
 
-class OSLGenCodeGenerationTester : public GenShaderUtil::ShaderGeneratorTester
+class OslShaderGeneratorTester : public GenShaderUtil::ShaderGeneratorTester
 {
-public:
+  public:
     using ParentClass = GenShaderUtil::ShaderGeneratorTester;
 
-    OSLGenCodeGenerationTester(const mx::FilePath& testRootPath, const mx::FilePath& libSearchPath,
-                               const mx::FileSearchPath& srcSearchPath, const mx::FilePath& logFilePath)
-        : GenShaderUtil::ShaderGeneratorTester(testRootPath, libSearchPath, srcSearchPath, logFilePath)
+    OslShaderGeneratorTester(const mx::FilePath& testRootPath, const mx::FilePath& libSearchPath,
+                               const mx::FileSearchPath& srcSearchPath, const mx::FilePath& logFilePath) : 
+        GenShaderUtil::ShaderGeneratorTester(testRootPath, libSearchPath, srcSearchPath, logFilePath)
     {}
 
     void createGenerator() override
@@ -136,7 +136,7 @@ static void generateOSLCode()
     mx::FileSearchPath srcSearchPath(libSearchPath.asString());
     srcSearchPath.append(libSearchPath / mx::FilePath("stdlib/osl"));
     const mx::FilePath logPath("genosl_vanilla_generate_test.txt");
-    OSLGenCodeGenerationTester tester(testRootPath, libSearchPath, srcSearchPath, logPath);
+    OslShaderGeneratorTester tester(testRootPath, libSearchPath, srcSearchPath, logPath);
  
     const mx::GenOptions genOptions;
     tester.testGeneration(genOptions);
