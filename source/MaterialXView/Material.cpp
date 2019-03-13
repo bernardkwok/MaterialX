@@ -474,7 +474,7 @@ void Material::bindLights(mx::HwLightHandlerPtr lightHandler, mx::GLTextureHandl
     int lightCount = directLighting ? (int) lightHandler->getLightSources().size() : 0;
     _glShader->setUniform("u_numActiveLightSources", lightCount);
     std::unordered_map<std::string, unsigned int> ids;
-    mx::mapNodeDefToIdentiers(lightHandler->getLightSources(), ids);
+    lightHandler->mapNodeDefToIdentiers(lightHandler->getLightSources(), ids);
     size_t index = 0;
     for (mx::NodePtr light : lightHandler->getLightSources())
     {

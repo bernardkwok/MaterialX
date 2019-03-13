@@ -270,7 +270,7 @@ void Viewer::setupLights(mx::DocumentPtr doc, const std::string& envRadiancePath
         {
             // Create a list of unique nodedefs and ids for them
             std::unordered_map<std::string, unsigned int> identifiers;
-            mx::mapNodeDefToIdentiers(lights, identifiers);
+            _lightHandler->mapNodeDefToIdentiers(lights, identifiers);
             for (auto id : identifiers)
             {
                 mx::NodeDefPtr nodeDef = _doc->getNodeDef(id.first);
